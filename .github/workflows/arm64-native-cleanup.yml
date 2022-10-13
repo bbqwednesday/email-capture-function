@@ -9,7 +9,7 @@ jobs:
   setup-runner:
     runs-on: ubuntu-latest
     steps:
-      - name: Terraform Cloud Workspace Init
+      - name: Terraform Cloud Workspace Cleanup
         run: |
           curl -X POST https://api.github.com/repos/bbqwednesday/terraform-cloud/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
