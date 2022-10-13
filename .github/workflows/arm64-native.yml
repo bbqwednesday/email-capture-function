@@ -1,0 +1,34 @@
+name: Native-ARM64
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup-runner:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Terraform Cloud Workspace Init
+        run: |
+          curl -X POST https://api.github.com/repos/bbqwednesday/terraform-cloud/dispatches \
+          -H 'Accept: application/vnd.github.everest-preview+json' \
+          -u ${{ secrets.ACCESS_TOKEN }} \
+          --data '{"event_type": "init '"$GITHUB_REPOSITORY"' dynamic-tf-oci-arm64-runner", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+
+  build:
+    runs-on: ARM64
+    needs: setup-runner
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      #Build Image
+      - name: Build Image
+        run: ./mvnw -Pnative-arm64 spring-boot:build-image -DskipTests
